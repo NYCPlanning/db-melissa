@@ -19,7 +19,7 @@ until docker exec $DB_CONTAINER_NAME psql -h localhost -U postgres; do
 done
 
 docker inspect -f '{{.State.Running}}' $DB_CONTAINER_NAME
-docker exec ztl psql -U postgres -h localhost -c "SELECT 'DATABSE IS UP';"
+docker exec $DB_CONTAINER_NAME psql -U postgres -h localhost -c "SELECT 'DATABSE IS UP';"
 
 ## load data into the ztl container
 docker run --rm\
