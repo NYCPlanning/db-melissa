@@ -5,6 +5,7 @@ from pathlib import Path
 import pandas as pd
 import usaddress
 import json
+import re
 import os 
 
 g = Geosupport()
@@ -12,8 +13,9 @@ g = Geosupport()
 def geocode(input):
     # collect inputs
     address = input.pop('address')
-    zip_code = input.pop('address')
-    id = address + zip_code
+    zip_code = input.pop('zip_code')
+    id = str('' if address is None else address) +\
+        str('' if zip_code is None else zip_code)
     hnum = get_hnum(address)
     sname = get_sname(address)
 
@@ -82,8 +84,8 @@ def parse_ap(geo):
                 WA1_Message = geo.get('Message', 'msg err'),
                 WA2_Latitude = geo.get('Latitude', ''),
                 WA2_Longitude = geo.get('Longitude', ''),
-                WA2_XCoordinate = xy_coord[:len(xy_coord)/2],
-                WA2_YCoordinate = xy_coord[len(xy_coord)/2:],
+                WA2_XCoordinate = xy_coord, 
+                WA2_YCoordinate = xy_coord,
                 WA2_AP_ID = geo.get('Address Point ID', '')
             )
 
@@ -92,7 +94,7 @@ if __name__ == '__main__':
     engine = create_engine(os.environ['BUILD_ENGINE'])
 
     # read in housing table
-    df = pd.read_sql("SELECT address, zip as zip_code FROM melissa_input;", engine)
+    df = pd.read_sql("SELECT DISTINCT address, zip as zip_code FROM melissa_input;", engine)
 
     records = df.to_dict('records')
     
