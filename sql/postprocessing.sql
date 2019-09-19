@@ -49,3 +49,7 @@ CREATE TABLE melissa_ap AS (
         ap_wa2_ap_id AS wa2_id
     FROM melissa_input_geocode
 );
+
+UPDATE melissa_ap
+SET wa2_xcoordinate=left(wa2_xcoordinate, 7), 
+    wa2_ycoordinate=right(wa2_ycoordinate, 7);
