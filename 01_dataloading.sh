@@ -28,3 +28,5 @@ docker run --rm\
             -w /home/python\
             --env-file .env\
             sptkl/cook:latest python3 dataloading.py
+
+docker exec $DB_CONTAINER_NAME psql -U postgres -h localhost -f sql/preprocessing.sql
