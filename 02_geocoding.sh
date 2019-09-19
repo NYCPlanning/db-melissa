@@ -5,7 +5,7 @@ docker run --rm\
     -v `pwd`:/home/db-melissa\
     -w /home/db-melissa\
     --env-file .env\
-    sptkl/docker-geosupport:19b2 bash -c "pip3 install -r requirements.txt; python3 python/geocoding.py"
+    sptkl/docker-geosupport:19c bash -c "pip3 install -r requirements.txt; python3 python/geocoding.py"
 
 docker exec $DB_CONTAINER_NAME psql -U postgres -h localhost -c "
     DROP TABLE IF EXISTS melissa_input_geocode;
