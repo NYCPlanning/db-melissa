@@ -45,10 +45,19 @@ docker exec $DB_CONTAINER_NAME psql -U postgres -h localhost -c "
         ap_WA2_AP_ID text,
         id text
     );
+    DROP TABLE IF EXISTS melissa_corrections_geocode;
+    CREATE TABLE melissa_corrections_geocode AS (SELECT * FROM melissa_input_geocode);
 "
 docker exec $DB_CONTAINER_NAME psql -U postgres -h localhost -c "
     COPY melissa_input_geocode 
     FROM '/home/db-melissa/output/melissa_input_geocode.csv' 
+    WITH NULL AS '' 
+    DELIMITER ',' 
+    CSV HEADER;
+"
+docker exec $DB_CONTAINER_NAME psql -U postgres -h localhost -c "
+    COPY melissa_corrections_geocode 
+    FROM '/home/db-melissa/output/melissa_corrections_geocode.csv' 
     WITH NULL AS '' 
     DELIMITER ',' 
     CSV HEADER;

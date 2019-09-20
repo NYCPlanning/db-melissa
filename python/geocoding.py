@@ -14,13 +14,11 @@ def geocode(input):
     # collect inputs
     address = input.pop('address')
     zip_code = input.pop('zip_code')
-    city = input.pop('city')
     boro = input.pop('boro')
     id = input.pop('id')
 
     boro = str('' if boro is None else boro)
     address = str('' if address is None else address)
-    city = str('' if city is None else city)
     zip_code = str('' if zip_code is None else zip_code)
     id = str('' if id is None else id)
 
@@ -112,7 +110,7 @@ if __name__ == '__main__':
     df = pd.read_sql('''SELECT DISTINCT id,
                         address, 
                         zip as zip_code, 
-                        city, boro 
+                        boro 
                         FROM melissa_input;''', engine)
 
     records = df.to_dict('records')
@@ -127,4 +125,23 @@ if __name__ == '__main__':
     os.system('echo "\ngeocoding finished, writing to csv ..."')
     df = pd.DataFrame(it)
     df.to_csv(Path(__file__).parent.parent/'output/melissa_input_geocode.csv', index=False)
-    # df.to_sql('melissa_input_geocode', engine, if_exists='replace', chunksize=100000)
+
+     # read in housing table
+    df_corrections = pd.read_sql('''SELECT DISTINCT id,
+                        corrected_hn||' '||corrected_street as address, 
+                        '' as zip_code,
+                        corrected_borough as boro
+                        FROM melissa_corrections;''', engine)
+
+    records_corrections = df_corrections.to_dict('records')
+    
+    os.system('clear')
+    os.system('echo "\ngeocoding corrections starts here ..."')
+
+    # Multiprocess
+    with Pool(processes=cpu_count()) as pool:
+        it_corrections = pool.map(geocode, records_corrections, 10000)
+    
+    os.system('echo "\ngeocoding finished, writing corrections to csv ..."')
+    df_corrections = pd.DataFrame(it_corrections)
+    df_corrections.to_csv(Path(__file__).parent.parent/'output/melissa_corrections_geocode.csv', index=False)
