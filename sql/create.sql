@@ -1,3 +1,4 @@
+-- create main output table
 DROP TABLE IF EXISTS melissa;
 CREATE TABLE melissa (
     id text,
@@ -39,6 +40,7 @@ CREATE TABLE melissa (
     FAP_Message text
 );
 
+-- insert unique id
 INSERT INTO melissa (id)
 SELECT b.id
 FROM (SELECT DISTINCT id FROM melissa_input) AS b;

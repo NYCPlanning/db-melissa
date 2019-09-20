@@ -43,17 +43,36 @@ def geo_try(hnum, sname, zip_code, boro, func, mode):
         return e.result
 
 def get_hnum(address):
-        result = [k for (k,v) in usaddress.parse(address) \
-                if re.search("Address", v)]  if address is not None else ''
-        return ' '.join(result)
+    fraction = re.findall('\d+[\/]\d+', address)
+    rear = re.findall(' rear ', address, re.IGNORECASE)
+    result = [k for (k,v) in usaddress.parse(address) \
+            if re.search("Address", v)]  if address is not None else ''
+    hnum = ' '.join(result)
+    if bool(re.search('\d+[\/]\d+', hnum)) and len(fraction) != 0:
+        pass
+    else:
+        if not bool(re.search('\d+[\/]\d+', hnum)) and len(fraction) != 0:
+            hnum = f'{hnum} {fraction[0]}'
+    
+    if len(rear) != 0:
+        hnum = f'{hnum} rear'
+    return hnum
 
 def get_sname(address):
+    fraction = re.findall('\d+[\/]\d+', address)
+    rear = re.findall(' rear ', address, re.IGNORECASE)
+
     result = [k for (k,v) in usaddress.parse(address) \
             if re.search("Street", v)]  if address is not None else ''
     result = ' '.join(result)
+    if len(fraction) != 0: 
+        for i in fraction: 
+            result = result.replace(i, '')
+    if len(rear) != 0:
+        result = result.lower().replace('rear', '')
     if result == '':
         return address
-    else: 
+    else:
         return result
 
 def parse_1e(geo):
