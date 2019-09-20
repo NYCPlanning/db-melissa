@@ -62,4 +62,4 @@ docker exec $DB_CONTAINER_NAME psql -U postgres -h localhost -c "
     DELIMITER ',' 
     CSV HEADER;
 "
-docker exec $DB_CONTAINER_NAME psql -U postgres -h localhost -f sql/postprocessing.sql
+# docker exec $DB_CONTAINER_NAME psql -U postgres -h localhost -f sql/postprocessing.sql
