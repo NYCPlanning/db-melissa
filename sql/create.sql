@@ -2,6 +2,12 @@
 DROP TABLE IF EXISTS melissa;
 CREATE TABLE melissa (
     id text,
+    address text,
+    city text, 
+    state text, 
+    zip text,
+    hnum text,
+    sname text,
     Corrected_Borough text,
     Corrected_House_Number text,
     Corrected_Street_Name text,

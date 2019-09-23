@@ -30,7 +30,7 @@ def geocode(input):
     geoAP = parse_ap(geo_try(hnum, sname, zip_code, boro, 'AP', 'extended'))
 
     geo = {**geo1A, **geo1E, **geoAP}
-    geo.update(dict(id=id))
+    geo.update(dict(id=id, hnum=hnum, sname=sname))
     return geo
 
 def geo_try(hnum, sname, zip_code, boro, func, mode):

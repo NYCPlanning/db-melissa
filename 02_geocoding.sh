@@ -43,7 +43,9 @@ docker exec $DB_CONTAINER_NAME psql -U postgres -h localhost -c "
         ap_WA2_XCoordinate text,
         ap_WA2_YCoordinate text,
         ap_WA2_AP_ID text,
-        id text
+        id text, 
+        hnum text,
+        sname text
     );
     DROP TABLE IF EXISTS melissa_corrections_geocode;
     CREATE TABLE melissa_corrections_geocode AS (SELECT * FROM melissa_input_geocode);
