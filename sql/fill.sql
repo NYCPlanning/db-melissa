@@ -10,9 +10,7 @@ WHERE melissa.id = b.id;
 
 -- 
 UPDATE melissa
-SET sname = b.sname, 
-    hnum = b.hnum,
-    borough_code = b.e_wa1_street1_boroughcode,
+SET borough_code = b.e_wa1_street1_boroughcode,
     f1_normalized_hn = b.e_wa1_housenumberdisplay,
     f1_normalized_sn = b.e_wa1_street1_streetname, 
     centerline_xcoordinate = b.e_wa2_xcoordinate, 
@@ -47,7 +45,9 @@ FROM melissa_corrections_geocode AS b
 WHERE melissa.id = b.id;
 
 UPDATE melissa
-SET borough_code = (CASE WHEN borough_code IS NULL THEN b.e_wa1_street1_boroughcode ELSE borough_code END),
+SET sname =(CASE WHEN melissa.sname IS NULL THEN b.sname ELSE melissa.sname END),
+    hnum = (CASE WHEN melissa.hnum IS NULL THEN b.hnum ELSE melissa.hnum END),
+    borough_code = (CASE WHEN borough_code IS NULL THEN b.e_wa1_street1_boroughcode ELSE borough_code END),
     f1_normalized_hn = (CASE WHEN f1_normalized_hn IS NULL THEN b.e_wa1_housenumberdisplay ELSE f1_normalized_hn END),
     f1_normalized_sn = (CASE WHEN f1_normalized_sn IS NULL THEN b.e_wa1_street1_streetname ELSE f1_normalized_sn END),
     centerline_xcoordinate = (CASE WHEN centerline_xcoordinate IS NULL THEN b.e_wa2_xcoordinate ELSE centerline_xcoordinate END), 

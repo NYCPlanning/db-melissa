@@ -45,6 +45,8 @@ def geo_try(hnum, sname, zip_code, boro, func, mode):
 def get_hnum(address):
     if '|' in address: 
         return address.split('|')[0]
+    elif 'term mkt' in address.lower():
+        return address.split(' ')[0]
     else: 
         fraction = re.findall('\d+[\/]\d+', address)
         rear = re.findall(' rear ', address, re.IGNORECASE)
@@ -56,7 +58,7 @@ def get_hnum(address):
         else:
             if not bool(re.search('\d+[\/]\d+', hnum)) and len(fraction) != 0:
                 hnum = f'{hnum} {fraction[0]}'
-        
+
         if len(rear) != 0:
             hnum = f'{hnum} rear'
         return hnum
@@ -64,6 +66,8 @@ def get_hnum(address):
 def get_sname(address):
     if '|' in address: 
         return address.split('|')[1]
+    elif 'term mkt' in address.lower():
+        return ' '.join(address.split(' ')[1:])
     else: 
         fraction = re.findall('\d+[\/]\d+', address)
         rear = re.findall(' rear ', address, re.IGNORECASE)
