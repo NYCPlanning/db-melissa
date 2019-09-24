@@ -43,37 +43,43 @@ def geo_try(hnum, sname, zip_code, boro, func, mode):
         return e.result
 
 def get_hnum(address):
-    fraction = re.findall('\d+[\/]\d+', address)
-    rear = re.findall(' rear ', address, re.IGNORECASE)
-    result = [k for (k,v) in usaddress.parse(address) \
-            if re.search("Address", v)]  if address is not None else ''
-    hnum = ' '.join(result)
-    if bool(re.search('\d+[\/]\d+', hnum)) and len(fraction) != 0:
-        pass
-    else:
-        if not bool(re.search('\d+[\/]\d+', hnum)) and len(fraction) != 0:
-            hnum = f'{hnum} {fraction[0]}'
-    
-    if len(rear) != 0:
-        hnum = f'{hnum} rear'
-    return hnum
+    if '|' in address: 
+        return address.split('|')[0]
+    else: 
+        fraction = re.findall('\d+[\/]\d+', address)
+        rear = re.findall(' rear ', address, re.IGNORECASE)
+        result = [k for (k,v) in usaddress.parse(address) \
+                if re.search("Address", v)]  if address is not None else ''
+        hnum = ' '.join(result)
+        if bool(re.search('\d+[\/]\d+', hnum)) and len(fraction) != 0:
+            pass
+        else:
+            if not bool(re.search('\d+[\/]\d+', hnum)) and len(fraction) != 0:
+                hnum = f'{hnum} {fraction[0]}'
+        
+        if len(rear) != 0:
+            hnum = f'{hnum} rear'
+        return hnum
 
 def get_sname(address):
-    fraction = re.findall('\d+[\/]\d+', address)
-    rear = re.findall(' rear ', address, re.IGNORECASE)
+    if '|' in address: 
+        return address.split('|')[1]
+    else: 
+        fraction = re.findall('\d+[\/]\d+', address)
+        rear = re.findall(' rear ', address, re.IGNORECASE)
 
-    result = [k for (k,v) in usaddress.parse(address) \
-            if re.search("Street", v)]  if address is not None else ''
-    result = ' '.join(result)
-    if len(fraction) != 0: 
-        for i in fraction: 
-            result = result.replace(i, '')
-    if len(rear) != 0:
-        result = result.lower().replace('rear', '')
-    if result == '':
-        return address
-    else:
-        return result
+        result = [k for (k,v) in usaddress.parse(address) \
+                if re.search("Street", v)]  if address is not None else ''
+        result = ' '.join(result)
+        if len(fraction) != 0: 
+            for i in fraction: 
+                result = result.replace(i, '')
+        if len(rear) != 0:
+            result = result.lower().replace('rear', '')
+        if result == '':
+            return address
+        else:
+            return result
 
 def parse_1e(geo):
     return dict(
@@ -147,7 +153,7 @@ if __name__ == '__main__':
 
      # read in housing table
     df_corrections = pd.read_sql('''SELECT DISTINCT id,
-                        corrected_hn||' '||corrected_street as address, 
+                        corrected_hn||'|'||corrected_street as address, 
                         '' as zip_code,
                         corrected_borough as boro
                         FROM melissa_corrections;''', engine)
