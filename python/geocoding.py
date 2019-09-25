@@ -157,14 +157,13 @@ if __name__ == '__main__':
 
      # read in housing table
     df_corrections = pd.read_sql('''SELECT DISTINCT id,
-                        corrected_hn||'|'||corrected_street as address, 
+                        concat(corrected_hn, '|', corrected_street) as address, 
                         '' as zip_code,
                         corrected_borough as boro
                         FROM melissa_corrections;''', engine)
 
     records_corrections = df_corrections.to_dict('records')
     
-    os.system('clear')
     os.system('echo "\ngeocoding corrections starts here ..."')
 
     # Multiprocess
