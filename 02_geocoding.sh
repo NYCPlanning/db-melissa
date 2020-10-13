@@ -1,13 +1,16 @@
-DB_CONTAINER_NAME=melissa
+#!/bin/bash
+source config.sh
 
 docker run --rm\
-    --network=host\
-    -v `pwd`:/home/db-melissa\
+    -v $(pwd):/home/db-melissa\
     -w /home/db-melissa\
-    --env-file .env\
-    sptkl/docker-geosupport:19c bash -c "pip3 install -r requirements.txt; python3 python/geocoding.py"
+    -e BUILD_ENGINE=$BUILD_ENGINE\
+    nycplanning/docker-geosupport:latest bash -c "
+        pip3 install -r requirements.txt; 
+        python3 python/geocoding.py
+    "
 
-docker exec $DB_CONTAINER_NAME psql -U postgres -h localhost -c "
+psql $BUILD_ENGINE -c "
     DROP TABLE IF EXISTS melissa_input_geocode;
     CREATE TABLE melissa_input_geocode (
         a_WA1_HouseNumberDisplay text,
@@ -50,17 +53,11 @@ docker exec $DB_CONTAINER_NAME psql -U postgres -h localhost -c "
     DROP TABLE IF EXISTS melissa_corrections_geocode;
     CREATE TABLE melissa_corrections_geocode AS (SELECT * FROM melissa_input_geocode);
 "
-docker exec $DB_CONTAINER_NAME psql -U postgres -h localhost -c "
-    COPY melissa_input_geocode 
-    FROM '/home/db-melissa/output/melissa_input_geocode.csv' 
-    WITH NULL AS '' 
-    DELIMITER ',' 
-    CSV HEADER;
+cat output/melissa_input_geocode.csv | psql $BUILD_ENGINE -c "
+    COPY melissa_input_geocode FROM stdin 
+    WITH NULL AS '' DELIMITER ',' CSV HEADER;
 "
-docker exec $DB_CONTAINER_NAME psql -U postgres -h localhost -c "
-    COPY melissa_corrections_geocode 
-    FROM '/home/db-melissa/output/melissa_corrections_geocode.csv' 
-    WITH NULL AS '' 
-    DELIMITER ',' 
-    CSV HEADER;
+cat output/melissa_corrections_geocode.csv | psql $BUILD_ENGINE -c "
+    COPY melissa_corrections_geocode FROM stdin
+    WITH NULL AS '' DELIMITER ',' CSV HEADER;
 "
