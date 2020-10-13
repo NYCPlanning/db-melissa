@@ -1,6 +1,7 @@
-DB_CONTAINER_NAME=melissa
+#!/bin/bash
+source config.sh
 
-docker exec $DB_CONTAINER_NAME psql -U postgres -h localhost -f sql/create.sql
-docker exec $DB_CONTAINER_NAME psql -U postgres -h localhost -f sql/fill.sql
-docker exec $DB_CONTAINER_NAME psql -U postgres -h localhost -f sql/output.sql
-# docker exec $DB_CONTAINER_NAME psql -U postgres -h localhost -f sql/clean.sql
+psql $BUILD_ENGINE -f sql/create.sql
+psql $BUILD_ENGINE -f sql/fill.sql
+psql $BUILD_ENGINE -f sql/output.sql
+# psql $BUILD_ENGINE -f sql/clean.sql
