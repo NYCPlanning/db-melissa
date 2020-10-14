@@ -132,6 +132,9 @@ def parse_ap(geo):
             )
 
 if __name__ == '__main__':
+    if not os.path.exists(Path(__file__).parent.parent/'output'):
+        os.makedirs(Path(__file__).parent.parent/'output')
+
     # connect to postgres db
     engine = create_engine(os.environ['BUILD_ENGINE'])
 
