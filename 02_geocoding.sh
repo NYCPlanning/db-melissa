@@ -1,6 +1,8 @@
 #!/bin/bash
 source config.sh
 
+mkdir -p output
+
 docker run --rm\
     -v $(pwd):/home/db-melissa\
     -w /home/db-melissa\
