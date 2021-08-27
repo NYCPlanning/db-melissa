@@ -13,6 +13,9 @@ function set_env {
 set_env .env
 
 case $1 in 
+    install)
+        pip install -r requirements.txt
+        ;;
     dataloading) 
         mc cp spaces/edm-private/MelissaData2021.zip .
         rm -rf data && mkdir -p data && unzip MelissaData2021.zip -d data && rm MelissaData2021.zip
@@ -25,12 +28,7 @@ case $1 in
         psql $BUILD_ENGINE -f sql/output.sql
         ;;
     geocoding)
-        mkdir -p output
-        docker run --rm\
-        -v $(pwd):/home/db-melissa\
-        -w /home/db-melissa\
-        -e BUILD_ENGINE=$BUILD_ENGINE\
-        nycplanning/docker-geosupport:latest bash -c "pip3 install -r requirements.txt; python3 python/geocoding.py"
+        python3 python/geocoding.py
         ;;
     export) 
         pg_dump -t melissa_output --no-owner $BUILD_ENGINE | psql $EDM_DATA
@@ -41,7 +39,7 @@ case $1 in
         ;;
     *)
         echo 
-        echo "Command $1 not found, do ./melissa.sh dataloading|geocoding|build|export"
+        echo "Command $1 not found, do ./melissa.sh install|dataloading|geocoding|build|export"
         echo
         ;;
 esac

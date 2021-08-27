@@ -6,12 +6,14 @@ on:
 
 jobs:
   build:
-    runs-on: self-hosted
+    runs-on: ubuntu-20.04
+    container: nycplanning/docker-geosupport:latest
     env:
       BUILD_ENGINE: ${{ secrets.BUILD_ENGINE }}
       EDM_DATA: ${{ secrets.EDM_DATA }}
     steps:
       - uses: actions/checkout@v2
+      - run: ./melissa.sh install
       - run: ./melissa.sh dataloading
       - run: ./melissa.sh geocoding
       - run: ./melissa.sh build
