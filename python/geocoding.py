@@ -1,5 +1,4 @@
 from multiprocessing import Pool, cpu_count
-from python.dataloading import BUILD_ENGINE
 from sqlalchemy import create_engine
 from geosupport import Geosupport, GeosupportError
 from pathlib import Path
