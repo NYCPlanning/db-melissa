@@ -1,19 +1,18 @@
-name: CI
+name: Build Melissa
 
 on:
-  repository_dispatch:
-    type: [build]
+  push:
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: self-hosted
     env:
-      RECIPE_ENGINE: ${{ secrets.RECIPE_ENGINE }}
       BUILD_ENGINE: ${{ secrets.BUILD_ENGINE }}
       EDM_DATA: ${{ secrets.EDM_DATA }}
     steps:
       - uses: actions/checkout@v2
-      - run: ./01_dataloading.sh
-      - run: ./02_geocoding.sh
-      - run: ./03_build.sh
-      - run: ./04_export.sh
+      - run: ./melissa.sh dataloading
+      - run: ./melissa.sh geocoding
+      - run: ./melissa.sh build
+      - run: ./melissa.sh export
