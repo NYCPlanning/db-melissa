@@ -28,7 +28,7 @@ case $1 in
         psql $BUILD_ENGINE -f sql/output.sql
         ;;
     geocoding)
-        python3 python/geocoding.py
+        python3 -m python.geocoding
         ;;
     export) 
         pg_dump -t melissa_output --no-owner $BUILD_ENGINE | psql $EDM_DATA
