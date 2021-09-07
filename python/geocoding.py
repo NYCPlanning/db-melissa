@@ -190,7 +190,9 @@ if __name__ == "__main__":
     with Pool(processes=cpu_count()) as pool:
         it = pool.map(geocode, records, 10000)
 
-    pd.DataFrame(it).to_sql(
+    df = pd.DataFrame(it)
+    df.columns = [c.lower().replace(" ", "_") for c in df.columns]
+    df.to_sql(
         "melissa_input_geocode",
         BUILD_ENGINE,
         if_exists="replace",
@@ -211,9 +213,11 @@ if __name__ == "__main__":
     ).to_dict("records")
 
     with Pool(processes=cpu_count()) as pool:
-        it_corrections = pool.map(geocode, records_corrections, 10000)
+        it = pool.map(geocode, records_corrections, 10000)
 
-    pd.DataFrame(it_corrections).to_sql(
+    df = pd.DataFrame(it)
+    df.columns = [c.lower().replace(" ", "_") for c in df.columns]
+    df.to_sql(
         "melissa_corrections_geocode",
         BUILD_ENGINE,
         if_exists="replace",
