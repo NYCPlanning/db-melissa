@@ -175,7 +175,7 @@ if __name__ == "__main__":
     BUILD_ENGINE = create_engine(os.environ["BUILD_ENGINE"])
 
     # read in housing table
-    df = pd.read_sql(
+    records = pd.read_sql(
         """
         SELECT 
             DISTINCT id,
@@ -185,19 +185,12 @@ if __name__ == "__main__":
         FROM melissa_input;
     """,
         BUILD_ENGINE,
-    )
-
-    records = df.to_dict("records")
-
-    os.system("clear")
-    os.system('echo "\ngeocoding starts here ..."')
-
-    # Multiprocess
+    ).to_dict("records")
+    
     with Pool(processes=cpu_count()) as pool:
         it = pool.map(geocode, records, 10000)
 
-    os.system('echo "\ngeocoding finished, writing to csv ..."')
-    df = pd.DataFrame(it).to_sql(
+    pd.DataFrame(it).to_sql(
         "melissa_input_geocode",
         BUILD_ENGINE,
         if_exists="replace",
@@ -205,7 +198,7 @@ if __name__ == "__main__":
         index=False,
     )
 
-    df_corrections = pd.read_sql(
+    records_corrections = pd.read_sql(
         """
         SELECT 
             DISTINCT id,
@@ -215,19 +208,12 @@ if __name__ == "__main__":
         FROM melissa_corrections;
     """,
         BUILD_ENGINE,
-    )
+    ).to_dict("records")
 
-    records_corrections = df_corrections.to_dict("records")
-
-    os.system('echo "\ngeocoding corrections starts here ..."')
-
-    # Multiprocess
     with Pool(processes=cpu_count()) as pool:
         it_corrections = pool.map(geocode, records_corrections, 10000)
 
-    os.system('echo "\ngeocoding finished, writing corrections to csv ..."')
-    df_corrections = pd.DataFrame(it_corrections)
-    df.to_sql(
+    pd.DataFrame(it_corrections).to_sql(
         "melissa_corrections_geocode",
         BUILD_ENGINE,
         if_exists="replace",
