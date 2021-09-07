@@ -186,7 +186,7 @@ if __name__ == "__main__":
     """,
         BUILD_ENGINE,
     ).to_dict("records")
-    
+
     with Pool(processes=cpu_count()) as pool:
         it = pool.map(geocode, records, 10000)
 

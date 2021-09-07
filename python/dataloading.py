@@ -23,3 +23,27 @@ if __name__ == "__main__":
         method=psql_insert_copy,
         index=False,
     )
+
+    pd.read_csv(
+        Path(__file__).parent.parent / "data" / "melissa_corrections.csv",
+        dtype=str,
+        index_col=False,
+    ).to_sql(
+        "melissa_corrections",
+        BUILD_ENGINE,
+        if_exists="replace",
+        method=psql_insert_copy,
+        index=False,
+    )
+
+    pd.read_csv(
+        Path(__file__).parent.parent / "data" / "melissa_outsideofnyc.csv",
+        dtype=str,
+        index_col=False,
+    ).to_sql(
+        "melissa_outsideofnyc",
+        BUILD_ENGINE,
+        if_exists="replace",
+        method=psql_insert_copy,
+        index=False,
+    )
