@@ -12,6 +12,27 @@ function set_env {
 }
 set_env .env
 
+function CSV_export {
+    local tablename=$1
+    local filename=${2:-$tablename}
+    psql $BUILD_ENGINE  -c "\COPY (
+        SELECT * FROM $tablename
+    ) TO STDOUT DELIMITER ',' CSV HEADER;" > $filename.csv
+}
+
+function upload {
+    local branchname=$(git rev-parse --symbolic-full-name --abbrev-ref HEAD)
+    local DATE=$(date "+%Y-%m-%d")
+    local SPACES="spaces/edm-private/db-melissa/$branchname"
+    local HASH=$(git describe --always)
+    mc rm -r --force $SPACES/latest
+    mc rm -r --force $SPACES/$DATE
+    mc rm -r --force $SPACES/$HASH
+    mc cp --attr acl=private -r output $SPACES/latest
+    mc cp --attr acl=private -r output $SPACES/$DATE
+    mc cp --attr acl=private -r output $SPACES/$HASH
+}
+
 case $1 in 
     install)
         pip install -r requirements.txt
@@ -36,6 +57,14 @@ case $1 in
         psql $EDM_DATA -c "ALTER TABLE melissa_output SET SCHEMA dcp_melissa;";
         psql $EDM_DATA -c "DROP TABLE IF EXISTS dcp_melissa.\"$DATE\";"
         psql $EDM_DATA -c "ALTER TABLE dcp_melissa.melissa_output RENAME TO \"$DATE\";";
+
+        mkdir -p output && (
+            cd output
+            CSV_export melissa
+            zip melissa.zip melissa.csv
+            rm melissa.csv
+        )
+        upload
         ;;
     *)
         echo 
