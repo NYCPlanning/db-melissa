@@ -39,7 +39,7 @@ case $1 in
         ;;
     dataloading) 
         mc cp spaces/edm-private/MelissaData2021.zip .
-        rm -rf data && mkdir -p data && unzip MelissaData2021.zip -d data && rm MelissaData2021.zip
+        mkdir -p data && unzip MelissaData2021.zip -d data && rm MelissaData2021.zip
         python3 -m python.dataloading
         psql $BUILD_ENGINE -f sql/preprocessing.sql
         ;;
