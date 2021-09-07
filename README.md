@@ -1,7 +1,13 @@
 # db-melissa
 
-## Instructions: 
-1. `sh 01_dataloading.sh`
-2. `sh 02_geocoding.sh`
-3. `sh 03_build.sh`
-4. `sh 04_export.sh`
+## Instructions
+
+Check [.github/workflows/main.yml](https://github.com/NYCPlanning/db-melissa/blob/main/.github/workflows/main.yml) for the most updated instructions on what to run to build melissa
+
+```yml
+      - run: ./melissa.sh install
+      - run: ./melissa.sh dataloading
+      - run: ./melissa.sh geocoding
+      - run: ./melissa.sh build
+      - run: ./melissa.sh export
+```
