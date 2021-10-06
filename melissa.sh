@@ -61,8 +61,9 @@ case $1 in
         mkdir -p output && (
             cd output
             CSV_export melissa
-            zip melissa.zip melissa.csv
-            rm melissa.csv
+            CSV_export melissa_output
+            zip melissa.zip *.csv
+            rm *.csv
         )
         upload
         ;;
