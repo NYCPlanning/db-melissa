@@ -37,9 +37,16 @@ case $1 in
     install)
         pip install -r requirements.txt
         ;;
-    dataloading) 
-        mc cp spaces/edm-private/MelissaData2021.zip .
-        mkdir -p data && unzip MelissaData2021.zip -d data && rm MelissaData2021.zip
+    dataloading)
+        if [ -z "${2:-}" ]; then
+            echo "Error: S3 URL is required"
+            echo "Usage: ./melissa.sh dataloading <s3_url>"
+            exit 1
+        fi
+        S3_URL="$2"
+        FILENAME=$(basename "$S3_URL")
+        wget -O "$FILENAME" "$S3_URL"
+        mkdir -p data && unzip "$FILENAME" -d data && rm "$FILENAME"
         python3 -m python.dataloading
         psql $BUILD_ENGINE -f sql/preprocessing.sql
         ;;
@@ -68,8 +75,9 @@ case $1 in
         upload
         ;;
     *)
-        echo 
-        echo "Command $1 not found, do ./melissa.sh install|dataloading|geocoding|build|export"
+        echo
+        echo "Command $1 not found, do ./melissa.sh install|dataloading <s3_url>|geocoding|build|export"
+        echo "  dataloading: Requires s3_url parameter (HTTP/HTTPS URL)"
         echo
         ;;
 esac
